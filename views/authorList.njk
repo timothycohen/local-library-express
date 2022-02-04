@@ -1,0 +1,14 @@
+{% extends layout %}
+{% block content %}
+  <h1>{{ title }}</h1>
+  <ul>
+    {% for author in authorList %}
+      <li>
+        <a href={{ author.url }}>{{ author.name }}</a>
+        <p>{{ author.dateOfBirthFormatted }} - {{ author.dateOfDeathFormatted }}</p>
+      </li>
+    {% else %}
+      <li>There are no authors</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

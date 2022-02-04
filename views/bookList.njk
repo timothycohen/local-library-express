@@ -1,0 +1,13 @@
+{% extends layout %}
+{% block content %}
+  <h1>{{ title }}</h1>
+  <ul>
+    {% for book in bookList %}
+      <li>
+        <a href={{ book.url }}>{{ book.title }}</a>
+      </li>
+    {% else %}
+      <li>There are no books</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
