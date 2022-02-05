@@ -35,7 +35,7 @@ exports.genre = function (req, res, next) {
 
 // Display Genre create form on GET.
 exports.getCreateGenre = function (req, res, next) {
-  res.render('genreForm.njk');
+  res.render('createGenreForm.njk');
 };
 
 // Handle Genre create form on POST.
@@ -48,7 +48,8 @@ exports.postCreateGenre = [
 
     const genre = new Genre({ name: req.body.name });
 
-    if (!errors.isEmpty()) return res.render('genreForm.njk', { genre, errors: errors.array() });
+    if (!errors.isEmpty())
+      return res.render('createGenreForm.njk', { genre, errors: errors.array() });
 
     // Data from form is valid.
     // Check if Genre with same name already exists.

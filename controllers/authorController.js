@@ -1,3 +1,4 @@
+const { body, validationResult } = require('express-validator');
 const Author = require('../models/author');
 const Book = require('../models/book');
 
@@ -33,14 +34,53 @@ exports.authorDetail = function (req, res, next) {
 };
 
 // Display Author create form on GET.
-exports.author_create_get = function (req, res) {
-  res.send('NOT IMPLEMENTED: Author create GET');
+exports.getCreateAuthor = function (req, res) {
+  res.render('createAuthorForm.njk');
 };
 
 // Handle Author create on POST.
-exports.author_create_post = function (req, res) {
-  res.send('NOT IMPLEMENTED: Author create POST');
-};
+exports.postCreateAuthor = [
+  // Validate
+  body('firstName')
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage('First name must be specified.')
+    .isAlphanumeric()
+    .withMessage('First name has non-alphanumeric characters.'),
+  body('familyName')
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage('Family name must be specified.')
+    .isAlphanumeric()
+    .withMessage('Family name has non-alphanumeric characters.'),
+  body('dateOfBirth', 'Invalid date of birth').optional({ checkFalsy: true }).isISO8601().toDate(),
+  body('dateOfDeath', 'Invalid date of death').optional({ checkFalsy: true }).isISO8601().toDate(),
+
+  (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      console.log(errors);
+      console.log(typeof errors);
+      return res.render('createAuthorForm.njk', { author: req.body, errors: errors.array() });
+    }
+
+    // Form data is valid.
+    // Create an Author object with escaped and trimmed data.
+    const author = new Author({
+      firstName: req.body.firstName,
+      familyName: req.body.familyName,
+      dateOfBirth: req.body.dateOfBirth,
+      dateOfDeath: req.body.dateOfDeath,
+    });
+    author.save((err) => {
+      if (err) return next(err);
+      res.redirect(author.url);
+    });
+  },
+];
 
 // Display Author delete form on GET.
 exports.author_delete_get = function (req, res) {

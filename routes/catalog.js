@@ -44,16 +44,16 @@ router.post('/book/:id/update', bookController.book_update_post);
 // GET all
 router.get('/authors', authorController.authorList);
 
+// GET request for creating Author. NOTE This must come before route for id (i.e. display author).
+router.get('/author/create', authorController.getCreateAuthor);
+
+// POST request for creating Author.
+router.post('/author/create', authorController.postCreateAuthor);
+
 // GET one
 router.get('/author/:id', authorController.authorDetail);
 
 /* ######################### TODO #########################  */
-// GET request for creating Author. NOTE This must come before route for id (i.e. display author).
-router.get('/author/create', authorController.author_create_get);
-
-// POST request for creating Author.
-router.post('/author/create', authorController.author_create_post);
-
 // GET request to delete Author.
 router.get('/author/:id/delete', authorController.author_delete_get);
 

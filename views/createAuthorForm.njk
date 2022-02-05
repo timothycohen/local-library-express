@@ -1,0 +1,24 @@
+{% extends "layout.njk" %}
+{% block content %}
+  <h1>Create Author</h1>
+  <form action="" method="POST">
+    <div class="form-group">
+      <label for="firstName">First Name:</label>
+      <input type="text" id="firstName" for="firstName" name="firstName" class="form-control" placeholder='First Name' value={{ author.firstName if author.firstName else '' }}></input>
+      <label for="familyName">Family Name:</label>
+      <input type="text" id="familyName" for="familyName" name="familyName" class="form-control" placeholder='Last Name' value={{ author.familyName if author.familyName else '' }}></input>
+      <label for="dateOfBirth">Date of Birth:</label>
+      <input type="date" id="dateOfBirth" for="dateOfBirth" name="dateOfBirth" class="form-control" placeholder='mm/dd/yy' value={{ author.dateOfBirth if author.dateOfBirth else '' }}></input>
+      <label for="dateOfDeath">Date of Death:</label>
+      <input type="date" id="dateOfDeath" for="dateOfDeath" name="dateOfDeath" class="form-control" placeholder='mm/dd/yy' value={{ author.dateOfDeath if author.dateOfDeath else '' }}></input>
+      <button class="btn btn-primary" type="submit">Create New Author</button>
+    </div>
+  </form>
+  {% if errors %}
+    <ul>
+      {% for error in errors %}
+        <li>{{ error.msg }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}
