@@ -23,20 +23,18 @@ exports.index = async (req, res) => {
     )
     .then((results) => {
       const data = {
-        layout: 'layout.njk',
         title: 'Local Library Home',
         ...results,
         error: null,
       };
-      res.render('catalog.njk', data);
+      res.render('overview.njk', data);
     })
     .catch((error) => {
       const data = {
-        layout: 'layout.njk',
         error,
         title: 'Local Library Home',
       };
-      res.render('catalog.njk', data);
+      res.render('overview.njk', data);
     });
 };
 
@@ -49,7 +47,6 @@ exports.bookList = (req, res, next) => {
       if (err) return next(err);
 
       res.render('bookList.njk', {
-        layout: 'layout.njk',
         bookList,
         title: 'Book List',
       });
@@ -70,7 +67,6 @@ exports.book = function (req, res, next) {
         return next(err);
       }
       res.render('book.njk', {
-        layout: 'layout.njk',
         ...results,
       });
     });

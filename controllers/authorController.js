@@ -8,7 +8,6 @@ exports.authorList = function (req, res, next) {
     .exec((err, authorList) => {
       if (err) return next(err);
       res.render('authorList.njk', {
-        layout: 'layout.njk',
         title: 'Author List',
         authorList,
       });
@@ -27,7 +26,6 @@ exports.authorDetail = function (req, res, next) {
     }))
     .then((data) => {
       res.render('author.njk', {
-        layout: 'layout.njk',
         data,
       });
     })

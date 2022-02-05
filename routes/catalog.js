@@ -71,15 +71,16 @@ router.post('/author/:id/update', authorController.author_update_post);
 // GET all
 router.get('/genres', genreController.genreList);
 
+// GET create genre form
+router.get('/genre/create', genreController.getCreateGenre);
+
+// POST create genre form
+router.post('/genre/create', genreController.postCreateGenre);
+
 // GET one
 router.get('/genre/:id', genreController.genre);
 
 /* ######################### TODO #########################  */
-// GET request for creating a Genre. NOTE This must come before route that displays Genre (uses id).
-router.get('/genre/create', genreController.genre_create_get);
-
-// POST request for creating Genre.
-router.post('/genre/create', genreController.genre_create_post);
 
 // GET request to delete Genre.
 router.get('/genre/:id/delete', genreController.genre_delete_get);

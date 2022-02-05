@@ -8,7 +8,6 @@ exports.bookInstanceList = function (req, res, next) {
       if (err) return next(err);
 
       res.render('bookInstanceList.njk', {
-        layout: 'layout.njk',
         title: 'Book Instance List',
         bookInstanceList,
       });
@@ -23,7 +22,6 @@ exports.bookInstanceDetail = function (req, res, next) {
       const [bookInstance] = data;
       if (err) return next(err);
       res.render('bookInstance.njk', {
-        layout: 'layout.njk',
         bookInstance,
       });
     });

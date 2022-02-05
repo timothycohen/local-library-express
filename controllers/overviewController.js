@@ -23,20 +23,18 @@ const overview = async (req, res) => {
     )
     .then((results) => {
       const data = {
-        layout: 'layout.njk',
         title: 'Local Library Home',
         ...results,
         error: null,
       };
-      res.render('catalog.njk', data);
+      res.render('overview.njk', data);
     })
     .catch((error) => {
       const data = {
-        layout: 'layout.njk',
         error,
         title: 'Local Library Home',
       };
-      res.render('catalog.njk', data);
+      res.render('overview.njk', data);
     });
 };
 
