@@ -17,7 +17,7 @@ exports.genreList = function (req, res, next) {
 };
 
 // Display detail page for a specific Genre.
-exports.genreDetails = function (req, res, next) {
+exports.genre = function (req, res, next) {
   Promise.all([Genre.findById(req.params.id), Book.find({ genre: req.params.id })])
     .then(([genre, genreBooks]) => ({ genre, genreBooks }))
     .then((results) => {
@@ -26,7 +26,7 @@ exports.genreDetails = function (req, res, next) {
         err.status = 404;
         return next(err);
       }
-      res.render('genreDetails.njk', {
+      res.render('genre.njk', {
         title: `Genre: ${results.genre.name}`,
         layout: 'layout.njk',
         ...results,

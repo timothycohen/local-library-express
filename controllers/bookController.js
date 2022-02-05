@@ -57,7 +57,7 @@ exports.bookList = (req, res, next) => {
 };
 
 // Display detail page for a specific book.
-exports.bookDetails = function (req, res, next) {
+exports.book = function (req, res, next) {
   Promise.all([
     Book.findById(req.params.id).populate('author').populate('genre'),
     BookInstance.find({ book: req.params.id }),
@@ -69,8 +69,7 @@ exports.bookDetails = function (req, res, next) {
         err.status = 404;
         return next(err);
       }
-      console.log(results.bookInstances);
-      res.render('bookDetails.njk', {
+      res.render('book.njk', {
         layout: 'layout.njk',
         ...results,
       });
