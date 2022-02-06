@@ -100,16 +100,16 @@ router.post('/genre/:id/update', genreController.genre_update_post);
 // GET all
 router.get('/bookInstances', bookInstanceController.bookInstanceList);
 
+// GET request for creating a BookInstance. NOTE This must come before route that displays BookInstance (uses id).
+router.get('/bookinstance/create', bookInstanceController.getCreateBookInstance);
+
+// POST request for creating BookInstance.
+router.post('/bookinstance/create', bookInstanceController.postCreateBookInstance);
+
 // GET one
 router.get('/bookInstance/:id', bookInstanceController.bookInstanceDetail);
 
 /* ######################### TODO #########################  */
-// GET request for creating a BookInstance. NOTE This must come before route that displays BookInstance (uses id).
-router.get('/bookinstance/create', bookInstanceController.bookinstance_create_get);
-
-// POST request for creating BookInstance.
-router.post('/bookinstance/create', bookInstanceController.bookinstance_create_post);
-
 // GET request to delete BookInstance.
 router.get('/bookinstance/:id/delete', bookInstanceController.bookinstance_delete_get);
 

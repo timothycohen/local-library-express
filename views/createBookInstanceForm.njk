@@ -1,0 +1,40 @@
+{% extends "layout.njk" %}
+{% block content %}
+  <h1>Create Book Instance</h1>
+  <form action="" method="POST">
+    <div class="form-group">
+      <label style="font-weight: 600" for="book">*Book:</label>
+      <select name="book" id="book" class="form-control" required>
+        {% for book in allBooks %}
+          {% if bookInstance.book === book.id %}
+            <option value="{{ book.id }}" selected>{{ book.title }}</option>
+          {% else %}
+            <option value="{{ book.id }}">{{ book.title }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <label style="font-weight: 600" for="imprint">*Imprint:</label>
+      <input type="text" id="imprint" name="imprint" class="form-control" placeholder='Imprint' value="{{ bookInstance.imprint if bookInstance.imprint else '' }}" required/>
+      <label style="font-weight: 600" for="dueBack">*Date when book available:</label>
+      <input type="date" id="dueBack" name="dueBack" class="form-control" value="{% if bookInstance.dueBack %}{{ bookInstance.dueBack }}{% else %}{{ today }}{% endif %}" required/>
+      <label style="font-weight: 600" for="status">Status:</label>
+      <select name="status" id="status" class="form-control">
+        {% for status in statuses %}
+          {% if bookInstance.status === status %}
+            <option value="{{ status }}" selected>{{ status }}</option>
+          {% else %}
+            <option value="{{ status }}">{{ status }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <button class="btn btn-primary" type="submit">Create New Book Instance</button>
+    </div>
+  </form>
+  {% if errors %}
+    <ul>
+      {% for error in errors %}
+        <li>{{ error.msg }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}
