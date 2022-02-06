@@ -1,0 +1,43 @@
+{% extends "layout.njk" %}
+{% block content %}
+  <h1>Create Book</h1>
+  <form action="" method="POST">
+    <div class="form-group">
+      <label style="font-weight: 600" for="title">*Title:</label>
+      <input type="text" id="title" name="title" class="form-control" placeholder='Title' value="{{ book.title if book.title else '' }}" required/>
+      <label style="font-weight: 600" for="author">*Author:</label>
+      <select name="author" id="author" class="form-control">
+        {% for author in allAuthors %}
+          {% if author.id === book.author %}
+            <option value="{{ author.id }}" selected>{{ author.name }}</option>
+          {% else %}
+            <option value="{{ author.id }}">{{ author.name }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <label style="font-weight: 600" for="summary">*Summary:</label>
+      <input type="text" id="summary" name="summary" class="form-control" placeholder='Summary' value="{{ book.summary if book.summary else '' }}" required/>
+      <label style="font-weight: 600" for="isbn">*ISBN:</label>
+      <input type="text" id="isbn" name="isbn" class="form-control" placeholder='ISBN' value="{{ book.isbn if book.isbn else '' }}" required/>
+      <fieldset>
+        <legend>Genre:</legend>
+        {% for genre in allGenres %}
+          {% if book.genres and (genre.id in book.genres) %}
+            <input type="checkbox" name="genres" value="{{ genre.id }}" checked="true"/>
+          {% else %}
+            <input type="checkbox" name="genres" value="{{ genre.id }}"/>
+          {% endif %}
+          <span>{{ genre.name }}</span>
+        {% endfor %}
+      </fieldset>
+      <button class="btn btn-primary" type="submit">Create New Book</button>
+    </div>
+  </form>
+  {% if errors %}
+    <ul>
+      {% for error in errors %}
+        <li>{{ error.msg }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

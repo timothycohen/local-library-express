@@ -5,7 +5,7 @@
   <ul>
     {% for book in genreBooks %}
       <li>
-        <a href={{ book.url }}>{{ book.title }}</a>
+        <a href="{{ book.url }}">{{ book.title }}</a>
         <p>{{ book.summary }}</p>
       </li>
     {% else %}

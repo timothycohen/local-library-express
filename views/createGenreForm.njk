@@ -3,8 +3,8 @@
   <h1>Create Genre</h1>
   <form action="" method="POST">
     <div class="form-group">
-      <label for="name">Genre:</label>
-      <input type="text" id="name" for="name" name="name" class="form-control" placeholder='Fantasy, Poetry etc.' value={{ genre.name if genre.name else "" }}></input>
+      <label for="name">*Genre:</label>
+      <input type="text" id="name" name="name" class="form-control" placeholder='Fantasy, Poetry etc.' value="{{ genre.name if genre.name else '' }}"/>
       <button class="btn btn-primary" type="submit">Create New Genre</button>
     </div>
   </form>

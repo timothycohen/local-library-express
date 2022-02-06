@@ -16,7 +16,7 @@ exports.bookInstanceList = function (req, res, next) {
 
 // Display detail page for a specific BookInstance.
 exports.bookInstanceDetail = function (req, res, next) {
-  BookInstance.find({ _id: req.params.id })
+  BookInstance.findById(req.params.id)
     .populate('book')
     .exec((err, data) => {
       const [bookInstance] = data;

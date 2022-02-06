@@ -19,7 +19,7 @@
   <p>
     <span class="bold">Genres:</span>
     {% for genre in book.genre %}
-      <a href={{ genre.url }}>{{ genre.name }}</a>
+      <a href="{{ genre.url }}">{{ genre.name }}</a>
     {% endfor %}
   </p>
   <h2>Copies:</h2>

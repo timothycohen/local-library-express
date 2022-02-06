@@ -4,8 +4,12 @@
   <ul>
     {% for author in authorList %}
       <li>
-        <a href={{ author.url }}>{{ author.name }}</a>
-        <p>{{ author.dateOfBirthFormatted }} - {{ author.dateOfDeathFormatted }}</p>
+        <a href="{{ author.url }}">{{ author.name }}</a>
+        <p>{{ author.lifespan }}
+          {% if author.ageAtDeath !== null %}
+            <span>(aged {{ author.ageAtDeath }})</span>
+          {% endif %}
+        </p>
       </li>
     {% else %}
       <li>There are no authors</li>

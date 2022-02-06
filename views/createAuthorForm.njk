@@ -3,14 +3,14 @@
   <h1>Create Author</h1>
   <form action="" method="POST">
     <div class="form-group">
-      <label for="firstName">First Name:</label>
-      <input type="text" id="firstName" for="firstName" name="firstName" class="form-control" placeholder='First Name' value={{ author.firstName if author.firstName else '' }}></input>
-      <label for="familyName">Family Name:</label>
-      <input type="text" id="familyName" for="familyName" name="familyName" class="form-control" placeholder='Last Name' value={{ author.familyName if author.familyName else '' }}></input>
+      <label for="firstName">*First Name:</label>
+      <input type="text" id="firstName" name="firstName" class="form-control" placeholder='First Name' value="{{ author.firstName if author.firstName else '' }}" required/>
+      <label for="familyName">*Family Name:</label>
+      <input type="text" id="familyName" name="familyName" class="form-control" placeholder='Last Name' value="{{ author.familyName if author.familyName else '' }}" required/>
       <label for="dateOfBirth">Date of Birth:</label>
-      <input type="date" id="dateOfBirth" for="dateOfBirth" name="dateOfBirth" class="form-control" placeholder='mm/dd/yy' value={{ author.dateOfBirth if author.dateOfBirth else '' }}></input>
+      <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" placeholder='mm/dd/yy' value="{{ author.dateOfBirth if author.dateOfBirth else '' }}"/>
       <label for="dateOfDeath">Date of Death:</label>
-      <input type="date" id="dateOfDeath" for="dateOfDeath" name="dateOfDeath" class="form-control" placeholder='mm/dd/yy' value={{ author.dateOfDeath if author.dateOfDeath else '' }}></input>
+      <input type="date" id="dateOfDeath" name="dateOfDeath" class="form-control" placeholder='mm/dd/yy' value="{{ author.dateOfDeath if author.dateOfDeath else '' }}"/>
       <button class="btn btn-primary" type="submit">Create New Author</button>
     </div>
   </form>

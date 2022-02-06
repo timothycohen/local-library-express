@@ -4,7 +4,7 @@
   <ul>
     {% for book in bookList %}
       <li>
-        <a href={{ book.url }}>{{ book.title }}</a>
+        <a href="{{ book.url }}">{{ book.title }}</a>
       </li>
     {% else %}
       <li>There are no books</li>

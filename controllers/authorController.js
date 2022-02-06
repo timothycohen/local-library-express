@@ -16,9 +16,9 @@ exports.authorList = function (req, res, next) {
 };
 
 // Display detail page for a specific Author.
-exports.authorDetail = function (req, res, next) {
+exports.authorDetail = async function (req, res, next) {
   Promise.all([
-    Author.find({ _id: req.params.id }),
+    Author.findById(req.params.id),
     Book.find({ author: req.params.id }, 'title summary').sort({ title: 1 }),
   ])
     .then(([author, books]) => ({

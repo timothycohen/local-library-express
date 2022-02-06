@@ -17,15 +17,16 @@ router.get('/', overview);
 // GET all
 router.get('/books', bookController.bookList);
 
+// GET request for creating a Book. NOTE This must come before routes that display Book (uses id).
+router.get('/book/create', bookController.getCreateBook);
+
+// POST request for creating Book.
+router.post('/book/create', bookController.postCreateBook);
+
 // GET one
 router.get('/book/:id', bookController.book);
 
 /* ######################### TODO #########################  */
-// GET request for creating a Book. NOTE This must come before routes that display Book (uses id).
-router.get('/book/create', bookController.book_create_get);
-
-// POST request for creating Book.
-router.post('/book/create', bookController.book_create_post);
 
 // GET request to delete Book.
 router.get('/book/:id/delete', bookController.book_delete_get);

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { calcYears } = require('../utils');
 
 const { Schema } = mongoose;
 
@@ -15,12 +16,6 @@ AuthorSchema.virtual('name').get(function () {
   return this.firstName ? this.firstName : this.familyName;
 });
 
-AuthorSchema.virtual('lifespan').get(function () {
-  const birth = this.dateOfBirth ? this.dateOfBirth.getYear() : '';
-  const death = this.dateOfDeath ? this.dateOfDeath.getYear() : '';
-  return `${birth} - ${death}`;
-});
-
 AuthorSchema.virtual('url').get(function () {
   return `/catalog/author/${this._id}`;
 });
@@ -35,6 +30,15 @@ AuthorSchema.virtual('dateOfBirthFormatted').get(function () {
 AuthorSchema.virtual('dateOfDeathFormatted').get(function () {
   if (!this.dateOfDeath) return '';
   return this.dateOfDeath.toLocaleDateString('en-us', format);
+});
+
+AuthorSchema.virtual('ageAtDeath').get(function () {
+  return calcYears(this.dateOfBirth, this.dateOfDeath);
+});
+
+AuthorSchema.virtual('lifespan').get(function () {
+  if (!this.dateOfDeath) return `${this.dateOfBirthFormatted} - `;
+  return `${this.dateOfBirthFormatted} - †${this.dateOfDeathFormatted}`;
 });
 
 // Export model

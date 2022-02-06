@@ -4,7 +4,7 @@
   <ul>
     {% for bookInstance in bookInstanceList %}
       <li>
-        <a href={{ bookInstance.url }}>{{ bookInstance.book.title }} : {{ bookInstance.imprint }}</a>
+        <a href="{{ bookInstance.url }}">{{ bookInstance.book.title }} : {{ bookInstance.imprint }}</a>
         {% if bookInstance.status === 'Available' %}
           <span class="text-success">{{ bookInstance.status }}</span>
         {% elseif bookInstance.status === 'Maintenance' %}

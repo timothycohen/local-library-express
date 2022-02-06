@@ -1,42 +1,8 @@
+const { body, validationResult } = require('express-validator');
 const Book = require('../models/book');
 const Author = require('../models/author');
 const Genre = require('../models/genre');
 const BookInstance = require('../models/bookInstance');
-
-// Display Overview Details
-exports.index = async (req, res) => {
-  Promise.all([
-    Book.countDocuments({}),
-    BookInstance.countDocuments({}),
-    BookInstance.countDocuments({ status: 'Available' }),
-    Author.countDocuments({}),
-    Genre.countDocuments({}),
-  ])
-    .then(
-      ([bookCount, bookInstanceCount, bookInstanceAvailableCount, authorCount, genreCount]) => ({
-        bookCount,
-        bookInstanceCount,
-        bookInstanceAvailableCount,
-        authorCount,
-        genreCount,
-      })
-    )
-    .then((results) => {
-      const data = {
-        title: 'Local Library Home',
-        ...results,
-        error: null,
-      };
-      res.render('overview.njk', data);
-    })
-    .catch((error) => {
-      const data = {
-        error,
-        title: 'Local Library Home',
-      };
-      res.render('overview.njk', data);
-    });
-};
 
 // Display list of all books.
 exports.bookList = (req, res, next) => {
@@ -73,14 +39,65 @@ exports.book = function (req, res, next) {
 };
 
 // Display book create form on GET.
-exports.book_create_get = function (req, res) {
-  res.send('NOT IMPLEMENTED: Book create GET');
+exports.getCreateBook = async function (req, res, next) {
+  const [allGenres, allAuthors] = await Promise.all([
+    Genre.find().sort([['name', 'ascending']]),
+    Author.find().sort([['name', 'ascending']]),
+  ]);
+  res.render('createBookForm.njk', { allGenres, allAuthors });
 };
 
 // Handle book create on POST.
-exports.book_create_post = function (req, res) {
-  res.send('NOT IMPLEMENTED: Book create POST');
-};
+exports.postCreateBook = [
+  // req.body.genres could be undefined, string, or array of id strings. cast into an array
+  (req, res, next) => {
+    if (!req.body.genres) req.body.genres = [];
+    if (typeof req.body.genres === 'string') req.body.genres = [req.body.genres];
+    next();
+  },
+  // Validate
+  body('title').trim().isLength({ min: 1 }).escape().withMessage('Title is required.'),
+  body('author').trim().isLength({ min: 1 }).escape().withMessage('Author is required.'),
+  body('summary').trim().isLength({ min: 1 }).escape().withMessage('Summary is required.'),
+  body('isbn')
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage('ISBN is required.')
+    .isAlphanumeric()
+    .withMessage('ISBN cannot have non-alphanumeric characters.'),
+  body('genre.*').escape(),
+
+  async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const [allGenres, allAuthors] = await Promise.all([
+        Genre.find().sort([['name', 'ascending']]),
+        Author.find().sort([['name', 'ascending']]),
+      ]);
+      return res.render('createBookForm.njk', {
+        allGenres,
+        allAuthors,
+        book: req.body,
+        errors: errors.array(),
+      });
+    }
+
+    const book = new Book({
+      title: req.body.title,
+      author: req.body.author,
+      summary: req.body.summary,
+      isbn: req.body.isbn,
+      genre: req.body.genres,
+    });
+
+    book.save((err) => {
+      if (err) return next(err);
+      res.redirect(book.url);
+    });
+  },
+];
 
 // Display book delete form on GET.
 exports.book_delete_get = function (req, res) {
