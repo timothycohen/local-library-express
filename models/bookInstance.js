@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
+const { getTwoWeeksFromNow } = require('../utils.js');
 
 const { Schema } = mongoose;
+
+const actions = ['Available', 'Maintenance', 'Loaned', 'Reserved'];
 
 const BookInstanceSchema = new Schema({
   book: { type: Schema.Types.ObjectId, ref: 'Book', required: true },
@@ -8,10 +11,27 @@ const BookInstanceSchema = new Schema({
   status: {
     type: String,
     required: true,
-    enum: ['Available', 'Maintenance', 'Loaned', 'Reserved'],
+    enum: actions,
     default: 'Maintenance',
   },
-  dueBack: { type: Date, default: Date.now },
+  dueBack: {
+    type: Date,
+    default() {
+      if (this.status === 'Available') return null;
+      return getTwoWeeksFromNow();
+    },
+  },
+  creationDate: { type: Date, default: Date.now, immutable: true },
+  history: [
+    {
+      action: {
+        type: String,
+        enum: actions,
+        immutable: true,
+      },
+      time: { type: Date, default: Date.now, immutable: true },
+    },
+  ],
 });
 
 BookInstanceSchema.virtual('url').get(function () {
@@ -20,6 +40,13 @@ BookInstanceSchema.virtual('url').get(function () {
 
 BookInstanceSchema.virtual('dueBackFormatted').get(function () {
   return this.dueBack.toLocaleString();
+});
+
+BookInstanceSchema.pre('save', function (next) {
+  if (!this.history) this.history = [];
+  this.history = this.history.push({ action: this.status });
+  if (this.status === 'Available') this.dueBack = null;
+  next();
 });
 
 module.exports = mongoose.model('BookInstance', BookInstanceSchema);

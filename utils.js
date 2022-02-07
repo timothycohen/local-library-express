@@ -12,4 +12,8 @@ const calcYears = (date1, date2) => {
   return years;
 };
 
-module.exports = { calcYears };
+const addTwoWeeks = (date) => new Date(date + 12096e5);
+const renewLoan = (doc) => (doc.dueBack = addTwoWeeks(Date.now()));
+const getTwoWeeksFromNow = () => addTwoWeeks(Date.now());
+
+module.exports = { calcYears, getTwoWeeksFromNow };
