@@ -5,18 +5,25 @@
       font-weight: bold;
     }
   </style>
-  <h1>ID: {{ bookInstance._id }}</h1>
+  <h1>
+    ID: {{ bookInstance._id }}
+  </h1>
   <p>
     <span class="bold">Title</span>
     <a href="{{ bookInstance.book.url }}">{{ bookInstance.book.title }}</a>
   </p>
   <p>
     <span class="bold">Imprint</span>
-    {{ bookInstance.imprint }}</p>
+    {{ bookInstance.imprint }}
+  </p>
   <p>
     <span class="bold">Status</span>
-    {{ bookInstance.status }}</p>
-  <p>
-    <span class="bold">Due Back</span>
-    {{ bookInstance.dueBackFormatted }}</p>
+    {{ bookInstance.status }}
+  </p>
+  {% if bookInstance.dueBackFormatted %}
+    <p>
+      <span class="bold">Due Back</span>
+      {{ bookInstance.dueBackFormatted }}
+    </p>
+  {% endif %}
 {% endblock %}

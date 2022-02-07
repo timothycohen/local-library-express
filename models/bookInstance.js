@@ -39,7 +39,8 @@ BookInstanceSchema.virtual('url').get(function () {
 });
 
 BookInstanceSchema.virtual('dueBackFormatted').get(function () {
-  return this.dueBack.toLocaleString();
+  if (this.dueBack) return this.dueBack.toLocaleString();
+  return null;
 });
 
 BookInstanceSchema.pre('save', function (next) {
