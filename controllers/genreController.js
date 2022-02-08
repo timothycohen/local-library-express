@@ -35,7 +35,7 @@ exports.genre = function (req, res, next) {
 
 // Display Genre create form on GET.
 exports.getCreateGenre = function (req, res, next) {
-  res.render('createGenreForm.njk');
+  res.render('createGenreForm.njk', { title: 'Create Genre' });
 };
 
 // Handle Genre create form on POST.

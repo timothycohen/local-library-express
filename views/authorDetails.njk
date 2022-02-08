@@ -1,0 +1,27 @@
+{% extends "layout.njk" %}
+{% block content %}
+  <style>
+    .bold {
+      font-weight: bold;
+    }
+  </style>
+  <h1>{{ data.author.name }}</h1>
+  <p>{{ data.author.lifespan }}
+    {% if data.author.ageAtDeath !== null %}
+      <span>(aged {{ data.author.ageAtDeath }})</span>
+    {% endif %}
+  </p>
+  <h2>Books</h2>
+  <ul>
+    {% for book in data.books %}
+      <li>
+        <a class="bold" href="{{ book.url }}">{{ book.title }}</a>
+        <p>{{ book.summary }}</p>
+      </li>
+    {% else %}
+      <li>No books from this author.</li>
+    {% endfor %}
+  </ul>
+  {% block deleteAuthorLink %}{% endblock %}
+  {% block deleteAuthor %}{% endblock %}
+{% endblock %}

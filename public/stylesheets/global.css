@@ -1,0 +1,19 @@
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+* {
+  padding: 0;
+  margin: 0;
+}
+:root {
+  --gray: rgb(33, 37, 41);
+  --primary: #0d6efd;
+  --primary__light: #1e77fb;
+  --light: #f8f9fa;
+  --sideBarWidth: 13rem;
+}

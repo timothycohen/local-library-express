@@ -22,7 +22,10 @@ exports.bookInstanceDetail = function (req, res, next) {
     .populate('book')
     .exec((err, bookInstance) => {
       if (err) return next(err);
-      res.render('bookInstance.njk', { bookInstance });
+      res.render('bookInstance.njk', {
+        title: `Book Instance: ${bookInstance.book.title}`,
+        bookInstance,
+      });
     });
 };
 
@@ -31,6 +34,7 @@ exports.getCreateBookInstance = async function (req, res) {
   const allBooks = await Book.find({}, 'id, title');
   const statuses = BookInstance.schema.path('status').enumValues;
   res.render('createBookInstanceForm.njk', {
+    title: 'Create Book Instance',
     allBooks,
     statuses,
     today: new Date().toLocaleDateString('en-CA'),

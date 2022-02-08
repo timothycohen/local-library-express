@@ -33,6 +33,7 @@ exports.book = function (req, res, next) {
         return next(err);
       }
       res.render('book.njk', {
+        title: `Book: ${results.book.title}`,
         ...results,
       });
     });
@@ -44,7 +45,11 @@ exports.getCreateBook = async function (req, res, next) {
     Genre.find().sort([['name', 'ascending']]),
     Author.find().sort([['name', 'ascending']]),
   ]);
-  res.render('createBookForm.njk', { allGenres, allAuthors });
+  res.render('createBookForm.njk', {
+    title: 'Create Book',
+    allGenres,
+    allAuthors,
+  });
 };
 
 // Handle book create on POST.

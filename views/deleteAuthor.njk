@@ -1,0 +1,11 @@
+{% extends "authorDetails.njk" %}
+{% block deleteAuthor %}
+  {% if data.books|length %}
+    <h2>This author still has books. Please delete the author's books before deleting the author.</h2>
+  {% else %}
+    <h2>Are you sure you want to delete this author?</h2>
+    <form action="/catalog/author/{{ data.author.id }}/delete" method="post">
+      <button type="submit">Confirm Delete Author</button>
+    </form>
+  {% endif %}
+{% endblock %}

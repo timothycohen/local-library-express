@@ -27,6 +27,7 @@ exports.authorDetail = async function (req, res, next) {
     }))
     .then((data) => {
       res.render('author.njk', {
+        title: `Author: ${data.author.name}`,
         data,
       });
     })
@@ -35,7 +36,7 @@ exports.authorDetail = async function (req, res, next) {
 
 // Display Author create form on GET.
 exports.getCreateAuthor = function (req, res) {
-  res.render('createAuthorForm.njk');
+  res.render('createAuthorForm.njk', { title: 'Create Author' });
 };
 
 // Handle Author create on POST.
@@ -83,13 +84,33 @@ exports.postCreateAuthor = [
 ];
 
 // Display Author delete form on GET.
-exports.author_delete_get = function (req, res) {
-  res.send('NOT IMPLEMENTED: Author delete GET');
+exports.getDeleteAuthor = async function (req, res, next) {
+  Promise.all([
+    Author.findById(req.params.id),
+    Book.find({ author: req.params.id }, 'title summary').sort({ title: 1 }),
+  ])
+    .then(([author, books]) => ({
+      author,
+      books,
+    }))
+    .then((data) => {
+      res.render('deleteAuthor.njk', { data, title: 'Delete Author' });
+    })
+    .catch((err) => next(err));
 };
 
 // Handle Author delete on POST.
-exports.author_delete_post = function (req, res) {
-  res.send('NOT IMPLEMENTED: Author delete POST');
+exports.postDeleteAuthor = async function (req, res, next) {
+  const books = await Book.findOne({ author: req.params.id }).catch((err) => next(err));
+  if (books) {
+    const err = new Error();
+    err.status = 403;
+    err.message = `Delete the author's books before the author.`;
+    next(err);
+  }
+  await Author.findByIdAndDelete(req.params.id).catch((err) => next(err));
+
+  res.redirect('/catalog');
 };
 
 // Display Author update form on GET.

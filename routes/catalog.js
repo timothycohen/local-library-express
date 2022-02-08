@@ -17,10 +17,11 @@ router.get('/', overview);
 // GET all
 router.get('/books', bookController.bookList);
 
-// GET request for creating a Book. NOTE This must come before routes that display Book (uses id).
+// GET create form
+// warn This must come before :id routes
 router.get('/book/create', bookController.getCreateBook);
 
-// POST request for creating Book.
+// POST create form
 router.post('/book/create', bookController.postCreateBook);
 
 // GET one
@@ -45,22 +46,23 @@ router.post('/book/:id/update', bookController.book_update_post);
 // GET all
 router.get('/authors', authorController.authorList);
 
-// GET request for creating Author. NOTE This must come before route for id (i.e. display author).
+// GET create form
+// warn This must come before :id routes
 router.get('/author/create', authorController.getCreateAuthor);
 
-// POST request for creating Author.
+// POST create form
 router.post('/author/create', authorController.postCreateAuthor);
 
 // GET one
 router.get('/author/:id', authorController.authorDetail);
 
+// GET delete author page
+router.get('/author/:id/delete', authorController.getDeleteAuthor);
+
+// POST delete author
+router.post('/author/:id/delete', authorController.postDeleteAuthor);
+
 /* ######################### TODO #########################  */
-// GET request to delete Author.
-router.get('/author/:id/delete', authorController.author_delete_get);
-
-// POST request to delete Author.
-router.post('/author/:id/delete', authorController.author_delete_post);
-
 // GET request to update Author.
 router.get('/author/:id/update', authorController.author_update_get);
 
@@ -72,10 +74,10 @@ router.post('/author/:id/update', authorController.author_update_post);
 // GET all
 router.get('/genres', genreController.genreList);
 
-// GET create genre form
+// GET create form
 router.get('/genre/create', genreController.getCreateGenre);
 
-// POST create genre form
+// POST create form
 router.post('/genre/create', genreController.postCreateGenre);
 
 // GET one
@@ -100,10 +102,11 @@ router.post('/genre/:id/update', genreController.genre_update_post);
 // GET all
 router.get('/bookInstances', bookInstanceController.bookInstanceList);
 
-// GET request for creating a BookInstance. NOTE This must come before route that displays BookInstance (uses id).
+// GET create form
+// warn This must come before :id routes
 router.get('/bookinstance/create', bookInstanceController.getCreateBookInstance);
 
-// POST request for creating BookInstance.
+// POST create form
 router.post('/bookinstance/create', bookInstanceController.postCreateBookInstance);
 
 // GET one
