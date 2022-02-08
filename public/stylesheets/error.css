@@ -1,0 +1,20 @@
+.errorPage {
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+.status {
+  font-size: 6rem;
+}
+.message {
+  font-size: 1.5rem;
+}
+
+@media only screen and (min-width: 700px) {
+  .status {
+    font-size: 8rem;
+  }
+  .message {
+    font-size: 2rem;
+  }
+}

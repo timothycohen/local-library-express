@@ -5,7 +5,7 @@ const debugLib = require('debug');
 const http = require('http');
 const app = require('../app');
 
-const debug = debugLib('mini-message-board:server');
+const debug = debugLib('local-library:server');
 
 // Get port from environment and store in Express.
 const port = normalizePort(process.env.PORT || '3000');

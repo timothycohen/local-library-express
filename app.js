@@ -40,23 +40,22 @@ app.use('/catalog', require('./routes/catalog'));
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-  next(createError(404));
+  const err = createError(404);
+  err.message = `Shoot! Couldn't find that page.`;
+  next(err);
 });
 
 // error handler
 app.use((err, req, res, next) => {
+  err.status = err.status || 500;
+  err.message = err.message || 'Something went wrong';
+
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  const data = {
-    message: 'Woops!',
-    status: err.status,
-  };
-
-  // render the error page
   res.status(err.status || 500);
-  res.render('error.njk', data);
+  res.render('error.njk', { ...err });
 });
 
 module.exports = app;
