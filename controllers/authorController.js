@@ -28,7 +28,7 @@ exports.authorDetail = async function (req, res, next) {
     .then((data) => {
       res.render('author.njk', {
         title: `Author: ${data.author.name}`,
-        data,
+        ...data,
       });
     })
     .catch((err) => next(err));
@@ -98,7 +98,7 @@ exports.getDeleteAuthor = async function (req, res, next) {
       books,
     }))
     .then((data) => {
-      res.render('deleteAuthor.njk', { data, title: 'Delete Author' });
+      res.render('deleteAuthor.njk', { ...data, title: 'Delete Author' });
     })
     .catch((err) => next(err));
 };

@@ -5,15 +5,15 @@
       font-weight: bold;
     }
   </style>
-  <h1>{{ data.author.name }}</h1>
-  <p>{{ data.author.lifespan }}
-    {% if data.author.ageAtDeath !== null %}
-      <span>(aged {{ data.author.ageAtDeath }})</span>
+  <h1>{{ author.name }}</h1>
+  <p>{{ author.lifespan }}
+    {% if author.ageAtDeath !== null %}
+      <span>(aged {{ author.ageAtDeath }})</span>
     {% endif %}
   </p>
   <h2>Books</h2>
   <ul>
-    {% for book in data.books %}
+    {% for book in books %}
       <li>
         <a class="bold" href="{{ book.url }}">{{ book.title }}</a>
         <p>{{ book.summary }}</p>

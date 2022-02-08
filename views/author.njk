@@ -1,8 +1,8 @@
 {% extends "authorDetails.njk" %}
 {% block deleteAuthorLink %}
-  {% if data.books|length %}
+  {% if books|length %}
     <p>To delete this author, please first delete associated books.</p>
   {% else %}
-    <a href="/catalog/author/{{ data.author.id }}/delete">Delete author.</a>
+    <a href="/catalog/author/{{ author.id }}/delete">Delete author.</a>
   {% endif %}
 {% endblock %}
