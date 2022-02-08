@@ -1,0 +1,57 @@
+{% extends "layout.njk" %}
+{% block content %}
+  <style>
+    .bold {
+      font-weight: bold;
+    }
+  </style>
+  <h2>Title: {{ book.title }}</h2>
+  <p>
+    <span class="bold">Author:</span>
+    <a href="{{ book.author.url }}">{{ book.author.name }}</a>
+  </p>
+  <p>
+    <span class="bold">Summary:</span>
+    {{ book.summary }}</p>
+  <p>
+    <span class="bold">ISBN:</span>
+    {{ book.isbn }}</p>
+  <p>
+    <span class="bold">Genres:</span>
+    {% for genre in book.genres %}
+      <a href="{{ genre.url }}">{{ genre.name }}</a>
+    {% endfor %}
+  </p>
+  <h2>Copies:</h2>
+  <ul>
+    {% for bookInstance in bookInstances %}
+      <li>
+        {% if bookInstance.status === 'Available' %}
+          <span class="text-success">{{ bookInstance.status }}</span>
+        {% elseif bookInstance.status === 'Maintenance' %}
+          <span class="text-danger">{{ bookInstance.status }}</span>
+        {% else %}
+          <span class="text-warning">{{ bookInstance.status }}</span>
+        {% endif %}
+        <p>
+          <span class="bold">Imprint:</span>
+          {{ bookInstance.imprint }}
+        </p>
+        {% if bookInstance.status !== 'Available' %}
+          <p>
+            <span class="bold">Due back:</span>
+            {{ bookInstance.dueBackFormatted }}
+          </p>
+        {% endif %}
+        <p>
+          <span class="bold">Id:</span>
+          <a href="{{ bookInstance.url }}">{{ bookInstance._id }}</a>
+        </p>
+      </li>
+    {% else %}
+      <li>There are no book copies in this library.</li>
+    {% endfor %}
+  </ul>
+  {% block deleteBookLink %}{% endblock %}
+  {% block deleteBook %}{% endblock %}
+{% endblock %}

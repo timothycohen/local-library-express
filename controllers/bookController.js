@@ -20,23 +20,23 @@ exports.bookList = (req, res, next) => {
 };
 
 // Display detail page for a specific book.
-exports.book = function (req, res, next) {
-  Promise.all([
+exports.book = async function (req, res, next) {
+  const [book, bookInstances] = await Promise.all([
     Book.findById(req.params.id).populate('author').populate('genres'),
     BookInstance.find({ book: req.params.id }),
-  ])
-    .then(([book, bookInstances]) => ({ book, bookInstances }))
-    .then((results) => {
-      if (results.book === null) {
-        const err = new Error('Book not found');
-        err.status = 404;
-        return next(err);
-      }
-      res.render('book.njk', {
-        title: `Book: ${results.book.title}`,
-        ...results,
-      });
-    });
+  ]).catch((err) => next(err));
+
+  if (book === null) {
+    const err = new Error('Book not found');
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('book.njk', {
+    title: `Book: ${book.title}`,
+    book,
+    bookInstances,
+  });
 };
 
 // Display book create form on GET.
@@ -105,13 +105,39 @@ exports.postCreateBook = [
 ];
 
 // Display book delete form on GET.
-exports.book_delete_get = function (req, res) {
-  res.send('NOT IMPLEMENTED: Book delete GET');
+exports.getDeleteBook = async function (req, res, next) {
+  const [book, bookInstances] = await Promise.all([
+    Book.findById(req.params.id).populate('author').populate('genres'),
+    BookInstance.find({ book: req.params.id }),
+  ]).catch((err) => next(err));
+
+  if (book === null) {
+    const err = new Error('Book not found');
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render('deleteBook.njk', {
+    title: `Book: ${book.title}`,
+    book,
+    bookInstances,
+  });
 };
 
 // Handle book delete on POST.
-exports.book_delete_post = function (req, res) {
-  res.send('NOT IMPLEMENTED: Book delete POST');
+exports.postDeleteBook = async function (req, res, next) {
+  const bookInstances = await BookInstance.findOne({ book: req.params.id }).catch((err) =>
+    next(err)
+  );
+  if (bookInstances) {
+    const err = new Error();
+    err.status = 403;
+    err.message = `Delete the book's instances before the book.`;
+    next(err);
+  }
+  await Book.findByIdAndDelete(req.params.id).catch((err) => next(err));
+
+  res.redirect('/catalog/books');
 };
 
 // Display book update form on GET.

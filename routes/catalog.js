@@ -27,13 +27,13 @@ router.post('/book/create', bookController.postCreateBook);
 // GET one
 router.get('/book/:id', bookController.book);
 
-/* ######################### TODO #########################  */
-
 // GET request to delete Book.
-router.get('/book/:id/delete', bookController.book_delete_get);
+router.get('/book/:id/delete', bookController.getDeleteBook);
 
 // POST request to delete Book.
-router.post('/book/:id/delete', bookController.book_delete_post);
+router.post('/book/:id/delete', bookController.postDeleteBook);
+
+/* ######################### TODO #########################  */
 
 // GET request to update Book.
 router.get('/book/:id/update', bookController.book_update_get);

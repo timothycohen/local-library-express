@@ -1,0 +1,11 @@
+{% extends "bookDetails.njk" %}
+{% block deleteBook %}
+  {% if bookInstances|length %}
+    <h2>This book still has book instances. Please delete the instances before deleting the book.</h2>
+  {% else %}
+    <h2>Are you sure you want to delete this author?</h2>
+    <form action="/catalog/book/{{ book.id }}/delete" method="post">
+      <button type="submit">Confirm Delete Book</button>
+    </form>
+  {% endif %}
+{% endblock %}
