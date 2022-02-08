@@ -82,6 +82,7 @@ exports.postCreateBook = [
         Author.find().sort([['name', 'ascending']]),
       ]);
       return res.render('createBookForm.njk', {
+        title: 'Create Book',
         allGenres,
         allAuthors,
         book: req.body,
@@ -141,11 +142,22 @@ exports.postDeleteBook = async function (req, res, next) {
 };
 
 // Display book update form on GET.
-exports.book_update_get = function (req, res) {
-  res.send('NOT IMPLEMENTED: Book update GET');
+exports.getUpdateBook = async function (req, res, next) {
+  const [book, allGenres, allAuthors] = await Promise.all([
+    Book.findById(req.params.id),
+    Genre.find().sort([['name', 'ascending']]),
+    Author.find().sort([['name', 'ascending']]),
+  ]).catch((err) => next(err));
+
+  return res.render('createBookForm.njk', {
+    title: 'Update Book',
+    allGenres,
+    allAuthors,
+    book,
+  });
 };
 
 // Handle book update on POST.
-exports.book_update_post = function (req, res) {
+exports.postUpdateBook = function (req, res) {
   res.send('NOT IMPLEMENTED: Book update POST');
 };

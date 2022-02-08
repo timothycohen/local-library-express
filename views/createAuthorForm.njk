@@ -1,6 +1,6 @@
 {% extends "layout.njk" %}
 {% block content %}
-  <h1>Create Author</h1>
+  <h1>{{ title }}</h1>
   <form action="" method="POST">
     <div class="form-group">
       <label for="firstName">*First Name:</label>
@@ -11,7 +11,7 @@
       <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-control" placeholder='mm/dd/yy' value="{{ author.dateOfBirth if author.dateOfBirth else '' }}"/>
       <label for="dateOfDeath">Date of Death:</label>
       <input type="date" id="dateOfDeath" name="dateOfDeath" class="form-control" placeholder='mm/dd/yy' value="{{ author.dateOfDeath if author.dateOfDeath else '' }}"/>
-      <button class="btn btn-primary" type="submit">Create New Author</button>
+      <button class="btn btn-primary" type="submit">{{ title }}</button>
     </div>
   </form>
   {% if errors %}

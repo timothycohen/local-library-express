@@ -41,7 +41,7 @@ exports.getCreateBookInstance = async function (req, res) {
   });
 };
 
-// Handle BookInstance create on POST.
+// Handle BookInstance create form on POST.
 exports.postCreateBookInstance = [
   // Validate
   body('book').trim().isLength({ min: 1 }).escape().withMessage('Book is required.'),
@@ -61,6 +61,7 @@ exports.postCreateBookInstance = [
       const statuses = BookInstance.schema.path('status').enumValues;
 
       return res.render('createBookInstanceForm.njk', {
+        title: 'Create Book Instance',
         bookInstance: res.body,
         allBooks,
         statuses,
@@ -89,11 +90,23 @@ exports.postDeleteBookInstance = async function (req, res, next) {
 };
 
 // Display BookInstance update form on GET.
-exports.bookinstance_update_get = function (req, res) {
-  res.send('NOT IMPLEMENTED: BookInstance update GET');
+exports.getUpdateBookInstance = async function (req, res, next) {
+  const [bookInstance, allBooks] = await Promise.all([
+    BookInstance.findById(req.params.id),
+    Book.find({}, 'id, title'),
+  ]).catch((err) => next(err));
+
+  const statuses = BookInstance.schema.path('status').enumValues;
+
+  return res.render('createBookInstanceForm.njk', {
+    title: 'Update Book Instance',
+    bookInstance,
+    allBooks,
+    statuses,
+  });
 };
 
 // Handle bookinstance update on POST.
-exports.bookinstance_update_post = function (req, res) {
+exports.postUpdateBookInstance = function (req, res) {
   res.send('NOT IMPLEMENTED: BookInstance update POST');
 };

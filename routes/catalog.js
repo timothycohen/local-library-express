@@ -7,12 +7,12 @@ const bookInstanceController = require('../controllers/bookInstanceController');
 
 const router = express.Router();
 
-/* ##### Overview #####  */
+/* ######################### Overview #########################  */
 
 // Get a count of each item
 router.get('/', overview);
 
-/* ##### Books #####  */
+/* ######################### Books #########################  */
 
 // GET all
 router.get('/books', bookController.bookList);
@@ -33,15 +33,13 @@ router.get('/book/:id/delete', bookController.getDeleteBook);
 // POST request to delete Book.
 router.post('/book/:id/delete', bookController.postDeleteBook);
 
-/* ######################### TODO #########################  */
-
 // GET request to update Book.
-router.get('/book/:id/update', bookController.book_update_get);
+router.get('/book/:id/update', bookController.getUpdateBook);
 
 // POST request to update Book.
-router.post('/book/:id/update', bookController.book_update_post);
+router.post('/book/:id/update', bookController.postUpdateBook);
 
-/* ##### Authors #####  */
+/* ######################### Authors #########################  */
 
 // GET all
 router.get('/authors', authorController.authorList);
@@ -62,19 +60,19 @@ router.get('/author/:id/delete', authorController.getDeleteAuthor);
 // POST delete author
 router.post('/author/:id/delete', authorController.postDeleteAuthor);
 
-/* ######################### TODO #########################  */
 // GET request to update Author.
-router.get('/author/:id/update', authorController.author_update_get);
+router.get('/author/:id/update', authorController.getUpdateAuthor);
 
 // POST request to update Author.
-router.post('/author/:id/update', authorController.author_update_post);
+router.post('/author/:id/update', authorController.postUpdateAuthor);
 
-/* ##### Genres #####  */
+/* ######################### Genres #########################  */
 
 // GET all
 router.get('/genres', genreController.genreList);
 
 // GET create form
+// warn This must come before :id routes
 router.get('/genre/create', genreController.getCreateGenre);
 
 // POST create form
@@ -86,15 +84,13 @@ router.get('/genre/:id', genreController.genre);
 // POST request to delete Genre.
 router.post('/genre/:id/delete', genreController.postDeleteGenre);
 
-/* ######################### TODO #########################  */
-
 // GET request to update Genre.
-router.get('/genre/:id/update', genreController.genre_update_get);
+router.get('/genre/:id/update', genreController.getUpdateGenre);
 
 // POST request to update Genre.
-router.post('/genre/:id/update', genreController.genre_update_post);
+router.post('/genre/:id/update', genreController.postUpdateGenre);
 
-/* ##### Book Instances #####  */
+/* ######################### Book Instances #########################  */
 
 // GET all
 router.get('/bookInstances', bookInstanceController.bookInstanceList);
@@ -112,11 +108,10 @@ router.get('/bookInstance/:id', bookInstanceController.bookInstanceDetail);
 // POST request to delete BookInstance.
 router.post('/bookinstance/:id/delete', bookInstanceController.postDeleteBookInstance);
 
-/* ######################### TODO #########################  */
 // GET request to update BookInstance.
-router.get('/bookinstance/:id/update', bookInstanceController.bookinstance_update_get);
+router.get('/bookinstance/:id/update', bookInstanceController.getUpdateBookInstance);
 
 // POST request to update BookInstance.
-router.post('/bookinstance/:id/update', bookInstanceController.bookinstance_update_post);
+router.post('/bookinstance/:id/update', bookInstanceController.postUpdateBookInstance);
 
 module.exports = router;

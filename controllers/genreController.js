@@ -49,7 +49,11 @@ exports.postCreateGenre = [
     const genre = new Genre({ name: req.body.name });
 
     if (!errors.isEmpty())
-      return res.render('createGenreForm.njk', { genre, errors: errors.array() });
+      return res.render('createGenreForm.njk', {
+        title: 'Create Genre',
+        genre,
+        errors: errors.array(),
+      });
 
     // Data from form is valid.
     // Check if Genre with same name already exists.
@@ -77,11 +81,16 @@ exports.postDeleteGenre = async function (req, res, next) {
 };
 
 // Display Genre update form on GET.
-exports.genre_update_get = function (req, res) {
-  res.send('NOT IMPLEMENTED: Genre update GET');
+exports.getUpdateGenre = async function (req, res) {
+  const genre = await Genre.findById(req.params.id);
+
+  return res.render('createGenreForm.njk', {
+    title: 'Update Genre',
+    genre,
+  });
 };
 
 // Handle Genre update on POST.
-exports.genre_update_post = function (req, res) {
+exports.postUpdateGenre = function (req, res) {
   res.send('NOT IMPLEMENTED: Genre update POST');
 };

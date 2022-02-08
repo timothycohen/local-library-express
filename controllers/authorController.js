@@ -39,7 +39,7 @@ exports.getCreateAuthor = function (req, res) {
   res.render('createAuthorForm.njk', { title: 'Create Author' });
 };
 
-// Handle Author create on POST.
+// Handle Author create form on POST.
 exports.postCreateAuthor = [
   // Validate
   body('firstName')
@@ -65,7 +65,11 @@ exports.postCreateAuthor = [
     if (!errors.isEmpty()) {
       console.log(errors);
       console.log(typeof errors);
-      return res.render('createAuthorForm.njk', { author: req.body, errors: errors.array() });
+      return res.render('createAuthorForm.njk', {
+        title: 'Create Author',
+        author: req.body,
+        errors: errors.array(),
+      });
     }
 
     // Form data is valid.
@@ -114,11 +118,16 @@ exports.postDeleteAuthor = async function (req, res, next) {
 };
 
 // Display Author update form on GET.
-exports.author_update_get = function (req, res) {
-  res.send('NOT IMPLEMENTED: Author update GET');
+exports.getUpdateAuthor = async function (req, res, next) {
+  const author = await Author.findById(req.params.id).catch((err) => next(err));
+
+  return res.render('createAuthorForm.njk', {
+    title: 'Update Author',
+    author,
+  });
 };
 
 // Handle Author update on POST.
-exports.author_update_post = function (req, res) {
+exports.postUpdateAuthor = function (req, res) {
   res.send('NOT IMPLEMENTED: Author update POST');
 };
