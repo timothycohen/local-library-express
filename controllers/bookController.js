@@ -158,6 +158,55 @@ exports.getUpdateBook = async function (req, res, next) {
 };
 
 // Handle book update on POST.
-exports.postUpdateBook = function (req, res) {
-  res.send('NOT IMPLEMENTED: Book update POST');
-};
+exports.postUpdateBook = [
+  // req.body.genres could be undefined, string, or array of id strings. cast into an array
+  (req, res, next) => {
+    if (!req.body.genres) req.body.genres = [];
+    if (typeof req.body.genres === 'string') req.body.genres = [req.body.genres];
+    next();
+  },
+  // Validate
+  body('title').trim().isLength({ min: 1 }).escape().withMessage('Title is required.'),
+  body('author').trim().isLength({ min: 1 }).escape().withMessage('Author is required.'),
+  body('summary').trim().isLength({ min: 1 }).escape().withMessage('Summary is required.'),
+  body('isbn')
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage('ISBN is required.')
+    .isAlphanumeric()
+    .withMessage('ISBN cannot have non-alphanumeric characters.'),
+  body('genres.*').escape(),
+
+  async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const [allGenres, allAuthors] = await Promise.all([
+        Genre.find().sort([['name', 'ascending']]),
+        Author.find().sort([['name', 'ascending']]),
+      ]);
+      return res.render('createBookForm.njk', {
+        title: 'Create Book',
+        allGenres,
+        allAuthors,
+        book: req.body,
+        errors: errors.array(),
+      });
+    }
+
+    const ogBook = await Book.findById(req.params.id);
+
+    await ogBook
+      .updateOne({
+        title: req.body.title,
+        author: req.body.author,
+        summary: req.body.summary,
+        isbn: req.body.isbn,
+        genres: req.body.genres,
+      })
+      .catch((err) => next(err));
+
+    res.redirect(ogBook.url);
+  },
+];

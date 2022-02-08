@@ -6,7 +6,7 @@
       <label style="font-weight: 600" for="book">*Book:</label>
       <select name="book" id="book" class="form-control" required>
         {% for book in allBooks %}
-          {% if bookInstance.book === book.id %}
+          {% if bookInstance.book == book.id %}
             <option value="{{ book.id }}" selected>{{ book.title }}</option>
           {% else %}
             <option value="{{ book.id }}">{{ book.title }}</option>

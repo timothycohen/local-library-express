@@ -63,11 +63,13 @@ exports.postCreateAuthor = [
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      console.log(errors);
-      console.log(typeof errors);
       return res.render('createAuthorForm.njk', {
         title: 'Create Author',
-        author: req.body,
+        author: {
+          ...req.body,
+          dateOfBirth: new Date(req.body.dateOfBirth).toLocaleDateString('en-CA'),
+          dateOfDeath: new Date(req.body.dateOfDeath).toLocaleDateString('en-CA'),
+        },
         errors: errors.array(),
       });
     }
@@ -123,11 +125,60 @@ exports.getUpdateAuthor = async function (req, res, next) {
 
   return res.render('createAuthorForm.njk', {
     title: 'Update Author',
-    author,
+    author: {
+      ...author._doc,
+      dateOfBirth: new Date(author.dateOfBirth).toLocaleDateString('en-CA'),
+      dateOfDeath: new Date(author.dateOfDeath).toLocaleDateString('en-CA'),
+    },
   });
 };
 
 // Handle Author update on POST.
-exports.postUpdateAuthor = function (req, res) {
-  res.send('NOT IMPLEMENTED: Author update POST');
-};
+exports.postUpdateAuthor = [
+  // Validate
+  body('firstName')
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage('First name must be specified.')
+    .isAlphanumeric()
+    .withMessage('First name has non-alphanumeric characters.'),
+  body('familyName')
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage('Family name must be specified.')
+    .isAlphanumeric()
+    .withMessage('Family name has non-alphanumeric characters.'),
+  body('dateOfBirth', 'Invalid date of birth').optional({ checkFalsy: true }).isISO8601().toDate(),
+  body('dateOfDeath', 'Invalid date of death').optional({ checkFalsy: true }).isISO8601().toDate(),
+
+  async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.render('createAuthorForm.njk', {
+        title: 'Update Author',
+        author: {
+          ...req.body,
+          dateOfBirth: new Date(req.body.dateOfBirth).toLocaleDateString('en-CA'),
+          dateOfDeath: new Date(req.body.dateOfDeath).toLocaleDateString('en-CA'),
+        },
+        errors: errors.array(),
+      });
+    }
+
+    const ogAuthor = await Author.findById(req.params.id);
+
+    await ogAuthor
+      .updateOne({
+        firstName: req.body.firstName,
+        familyName: req.body.familyName,
+        dateOfBirth: req.body.dateOfBirth,
+        dateOfDeath: req.body.dateOfDeath,
+      })
+      .catch((err) => next(err));
+
+    res.redirect(ogAuthor.url);
+  },
+];

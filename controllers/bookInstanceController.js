@@ -100,7 +100,10 @@ exports.getUpdateBookInstance = async function (req, res, next) {
 
   return res.render('createBookInstanceForm.njk', {
     title: 'Update Book Instance',
-    bookInstance,
+    bookInstance: {
+      ...bookInstance._doc,
+      dueBack: new Date(bookInstance.dueBack).toLocaleDateString('en-CA'),
+    },
     allBooks,
     statuses,
   });
