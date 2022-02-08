@@ -22,7 +22,7 @@ exports.bookList = (req, res, next) => {
 // Display detail page for a specific book.
 exports.book = function (req, res, next) {
   Promise.all([
-    Book.findById(req.params.id).populate('author').populate('genre'),
+    Book.findById(req.params.id).populate('author').populate('genres'),
     BookInstance.find({ book: req.params.id }),
   ])
     .then(([book, bookInstances]) => ({ book, bookInstances }))
@@ -71,7 +71,7 @@ exports.postCreateBook = [
     .withMessage('ISBN is required.')
     .isAlphanumeric()
     .withMessage('ISBN cannot have non-alphanumeric characters.'),
-  body('genre.*').escape(),
+  body('genres.*').escape(),
 
   async (req, res, next) => {
     const errors = validationResult(req);
@@ -94,7 +94,7 @@ exports.postCreateBook = [
       author: req.body.author,
       summary: req.body.summary,
       isbn: req.body.isbn,
-      genre: req.body.genres,
+      genres: req.body.genres,
     });
 
     book.save((err) => {

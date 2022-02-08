@@ -12,4 +12,14 @@
       <li>There are no books in this genre.</li>
     {% endfor %}
   </ul>
+  <h2>Delete this Genre?</h2>
+  <form action="/catalog/genre/{{ genre.id }}/delete" method="post"></form>
+  <button type="button" onClick="conf()">Delete Genre</button>
+  <script>
+    const conf = () => {
+      if (window.confirm('This will remove the genre from all books. Are you sure?') === true) {
+        document.querySelector('form').submit()
+      }
+    };
+  </script>
 {% endblock %}

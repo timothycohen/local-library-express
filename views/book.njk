@@ -18,7 +18,7 @@
     {{ book.isbn }}</p>
   <p>
     <span class="bold">Genres:</span>
-    {% for genre in book.genre %}
+    {% for genre in book.genres %}
       <a href="{{ genre.url }}">{{ genre.name }}</a>
     {% endfor %}
   </p>

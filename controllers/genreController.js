@@ -18,7 +18,7 @@ exports.genreList = function (req, res, next) {
 
 // Display detail page for a specific Genre.
 exports.genre = function (req, res, next) {
-  Promise.all([Genre.findById(req.params.id), Book.find({ genre: req.params.id })])
+  Promise.all([Genre.findById(req.params.id), Book.find({ genres: req.params.id })])
     .then(([genre, genreBooks]) => ({ genre, genreBooks }))
     .then((results) => {
       if (results.genre === null) {
@@ -67,14 +67,13 @@ exports.postCreateGenre = [
   },
 ];
 
-// Display Genre delete form on GET.
-exports.genre_delete_get = function (req, res) {
-  res.send('NOT IMPLEMENTED: Genre delete GET');
-};
-
-// Handle Genre delete on POST.
-exports.genre_delete_post = function (req, res) {
-  res.send('NOT IMPLEMENTED: Genre delete POST');
+// Handle Genre delete on POST. Schema middleware removes it from all books
+// findByIdAndDelete returns the query, not the doc, so it's a hassle to use in the schema.pre('remove') hook
+// easier to do this finding and deleting the document separately
+exports.postDeleteGenre = async function (req, res, next) {
+  const genreDoc = await Genre.findById(req.params.id).catch((err) => next(err));
+  await genreDoc.delete().catch((err) => next(err));
+  res.redirect('/catalog/genres');
 };
 
 // Display Genre update form on GET.

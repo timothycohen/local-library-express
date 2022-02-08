@@ -10,4 +10,11 @@ GenreSchema.virtual('url').get(function () {
   return `/catalog/genre/${this._id}`;
 });
 
+GenreSchema.pre('remove', async function () {
+  const genre = this;
+  await genre
+    .model('Book')
+    .updateMany({ genres: genre._id }, { $pull: { genres: genre._id } }, { multi: true });
+});
+
 module.exports = mongoose.model('Genre', GenreSchema);
