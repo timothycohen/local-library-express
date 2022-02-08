@@ -91,6 +91,27 @@ exports.getUpdateGenre = async function (req, res) {
 };
 
 // Handle Genre update on POST.
-exports.postUpdateGenre = function (req, res) {
-  res.send('NOT IMPLEMENTED: Genre update POST');
-};
+exports.postUpdateGenre = [
+  // Validate and sanitize the name field.
+  body('name', 'Genre name required').trim().isLength({ min: 1 }).escape(),
+
+  async (req, res, next) => {
+    const errors = validationResult(req);
+
+    const ogGenre = await Genre.findById(req.params.id);
+    const updatedFields = { name: req.body.name };
+    const updatedGenre = { ...ogGenre._doc, ...updatedFields };
+
+    if (!errors.isEmpty())
+      return res.render('createGenreForm.njk', {
+        title: 'Update Genre',
+        updatedGenre,
+        errors: errors.array(),
+      });
+
+    Genre.findByIdAndUpdate(req.params.id, updatedFields, (err) => {
+      if (err) return next(err);
+      return res.redirect(ogGenre.url);
+    });
+  },
+];

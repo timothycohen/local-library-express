@@ -15,6 +15,7 @@
   <h2>Delete this Genre?</h2>
   <form action="/catalog/genre/{{ genre.id }}/delete" method="post"></form>
   <button type="button" onClick="conf()">Delete Genre</button>
+  <a href="{{ genre.url }}/update">Update</a>
   <script>
     const conf = () => {
       if (window.confirm('This will remove the genre from all books. Are you sure?') === true) {
