@@ -112,13 +112,10 @@ router.post('/bookinstance/create', bookInstanceController.postCreateBookInstanc
 // GET one
 router.get('/bookInstance/:id', bookInstanceController.bookInstanceDetail);
 
-/* ######################### TODO #########################  */
-// GET request to delete BookInstance.
-router.get('/bookinstance/:id/delete', bookInstanceController.bookinstance_delete_get);
-
 // POST request to delete BookInstance.
-router.post('/bookinstance/:id/delete', bookInstanceController.bookinstance_delete_post);
+router.post('/bookinstance/:id/delete', bookInstanceController.postDeleteBookInstance);
 
+/* ######################### TODO #########################  */
 // GET request to update BookInstance.
 router.get('/bookinstance/:id/update', bookInstanceController.bookinstance_update_get);
 

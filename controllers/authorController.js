@@ -110,7 +110,7 @@ exports.postDeleteAuthor = async function (req, res, next) {
   }
   await Author.findByIdAndDelete(req.params.id).catch((err) => next(err));
 
-  res.redirect('/catalog');
+  res.redirect('/catalog/authors');
 };
 
 // Display Author update form on GET.

@@ -26,4 +26,14 @@
       {{ bookInstance.dueBackFormatted }}
     </p>
   {% endif %}
+  <h2>Delete this book instance?</h2>
+  <form action="/catalog/bookinstance/{{ bookInstance.id }}/delete" method="post"></form>
+  <button type="button" onClick="conf()">Confirm Delete Book Instance</button>
+  <script>
+    const conf = () => {
+      if (window.confirm('Are you sure you want to delete this book instance?') === true) {
+        document.querySelector('form').submit()
+      }
+    };
+  </script>
 {% endblock %}
