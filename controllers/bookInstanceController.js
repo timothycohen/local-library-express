@@ -107,6 +107,47 @@ exports.getUpdateBookInstance = async function (req, res, next) {
 };
 
 // Handle bookinstance update on POST.
-exports.postUpdateBookInstance = function (req, res) {
-  res.send('NOT IMPLEMENTED: BookInstance update POST');
-};
+exports.postUpdateBookInstance = [
+  // Validate
+  body('book').trim().isLength({ min: 1 }).escape().withMessage('Book is required.'),
+  body('imprint').trim().isLength({ min: 1 }).escape().withMessage('Imprint is required.'),
+  body('status')
+    .trim()
+    .isIn(BookInstance.schema.path('status').enumValues)
+    .escape()
+    .withMessage('Status is required.'),
+  body('dueBack', 'Invalid date').optional({ checkFalsy: true }).isISO8601().toDate(),
+
+  async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const allBooks = await Book.find({}, 'id, title');
+      const statuses = BookInstance.schema.path('status').enumValues;
+
+      return res.render('createBookInstanceForm.njk', {
+        title: 'Update Book Instance',
+        bookInstance: res.body,
+        allBooks,
+        statuses,
+        errors: errors.array(),
+      });
+    }
+
+    const ogInstance = await BookInstance.findById(req.params.id);
+
+    BookInstance.findByIdAndUpdate(
+      req.params.id,
+      {
+        book: req.body.book,
+        imprint: req.body.imprint,
+        status: req.body.status,
+        dueBack: req.body.dueBack,
+      },
+      (err) => {
+        if (err) return next(err);
+        return res.redirect(ogInstance.url);
+      }
+    );
+  },
+];

@@ -29,6 +29,7 @@
   <h2>Delete this book instance?</h2>
   <form action="/catalog/bookinstance/{{ bookInstance.id }}/delete" method="post"></form>
   <button type="button" onClick="conf()">Confirm Delete Book Instance</button>
+  <a href="{{ bookInstance.url }}/update">Update</a>
   <script>
     const conf = () => {
       if (window.confirm('Are you sure you want to delete this book instance?') === true) {
