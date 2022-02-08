@@ -66,6 +66,7 @@ nav a {
 
 .nav__navLink:hover {
   background-color: var(--primary__light);
+  color: var(--light);
 }
 [aria-current="page"] {
   background-color: var(--primary);

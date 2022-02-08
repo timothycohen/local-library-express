@@ -3,6 +3,6 @@
   {% if bookInstances|length %}
     <p>To delete this book, please first delete associated book instances.</p>
   {% else %}
-    <a href="/catalog/book/{{ book.id }}/delete">Delete book.</a>
+    <a class="btn btn-danger" href="/catalog/book/{{ book.id }}/delete">Delete book.</a>
   {% endif %}
 {% endblock %}

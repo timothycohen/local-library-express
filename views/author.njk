@@ -3,6 +3,6 @@
   {% if books|length %}
     <p>To delete this author, please first delete associated books.</p>
   {% else %}
-    <a href="/catalog/author/{{ author.id }}/delete">Delete author.</a>
+    <a class="btn btn-danger" href="/catalog/author/{{ author.id }}/delete">Delete author</a>
   {% endif %}
 {% endblock %}

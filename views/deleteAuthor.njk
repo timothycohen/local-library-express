@@ -3,9 +3,9 @@
   {% if books|length %}
     <h2>This author still has books. Please delete the author's books before deleting the author.</h2>
   {% else %}
-    <h2>Are you sure you want to delete this author?</h2>
+    <h3>Are you sure you want to delete this author?</h3>
     <form action="/catalog/author/{{ author.id }}/delete" method="post">
-      <button type="submit">Confirm Delete Author</button>
+      <button class="btn btn-danger" type="submit">Confirm Delete Author</button>
     </form>
   {% endif %}
 {% endblock %}
