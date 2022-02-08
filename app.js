@@ -17,8 +17,9 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // configure nunjucks templates
+// warn: escape all user input
 nunjucks.configure('views', {
-  autoescape: true,
+  autoescape: false,
   express: app,
 });
 
