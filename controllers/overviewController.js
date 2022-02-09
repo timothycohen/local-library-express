@@ -12,22 +12,15 @@ const overview = async (req, res, next) => {
     Author.countDocuments({}),
     Genre.countDocuments({}),
   ])
-    .then(
-      ([bookCount, bookInstanceCount, bookInstanceAvailableCount, authorCount, genreCount]) => ({
+    .then(([bookCount, bookInstanceCount, bookInstanceAvailableCount, authorCount, genreCount]) => {
+      res.render('overview.njk', {
+        title: 'Local Library Home',
         bookCount,
         bookInstanceCount,
         bookInstanceAvailableCount,
         authorCount,
         genreCount,
-      })
-    )
-    .then((results) => {
-      const data = {
-        title: 'Local Library Home',
-        ...results,
-        error: null,
-      };
-      res.render('overview.njk', data);
+      });
     })
     .catch(next);
 };
