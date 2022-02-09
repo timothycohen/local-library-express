@@ -6,10 +6,15 @@ const nunjucks = require('nunjucks');
 const mongoose = require('mongoose');
 require('dotenv').config();
 const debug = require('debug')('local-library:app');
+const compression = require('compression');
+const helmet = require('helmet');
 const { logHTTP, logError } = require('./utils/logger');
 
 // initialize express
 const app = express();
+
+// secure by setting various HTTP headers
+app.use(helmet());
 
 // set up db connection
 const mongoDB = process.env.DATABASE_URL;
@@ -37,6 +42,9 @@ app.use(express.urlencoded({ extended: false }));
 
 // parse the Cookie header on the request and expose as req.cookies (and if secret provided req.signedCookies)
 app.use(cookieParser());
+
+// compress all routes
+app.use(compression());
 
 // serve all files in the given path
 app.use(express.static(path.join(__dirname, 'public')));
