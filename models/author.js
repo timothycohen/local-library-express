@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { calcYears } = require('../utils');
+const { calcYears } = require('../utils/calcTime');
 
 const { Schema } = mongoose;
 

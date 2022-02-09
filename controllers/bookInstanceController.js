@@ -1,6 +1,8 @@
+const { isValidObjectId } = require('mongoose');
 const { body, validationResult } = require('express-validator');
 const BookInstance = require('../models/bookInstance');
 const Book = require('../models/book');
+const { pass404 } = require('../utils/errors');
 
 // Display list of all BookInstances.
 exports.bookInstanceList = function (req, res, next) {
@@ -17,28 +19,37 @@ exports.bookInstanceList = function (req, res, next) {
 };
 
 // Display detail page for a specific BookInstance.
-exports.bookInstanceDetail = function (req, res, next) {
+exports.bookInstanceDetail = async function (req, res, next) {
+  const { id } = req.params;
+  if (!isValidObjectId(id)) return pass404('book instance', 'Invalid Object Id', next);
+
   BookInstance.findById(req.params.id)
     .populate('book')
-    .exec((err, bookInstance) => {
-      if (err) return next(err);
+    .then((bookInstance) => {
+      if (!bookInstance) return pass404('book instance', `Couldn't find id ${id}.`, next);
+
       res.render('bookInstance.njk', {
         title: `Book Instance: ${bookInstance.book.title}`,
         bookInstance,
       });
-    });
+    })
+    .catch(next);
 };
 
 // Display BookInstance create form on GET.
-exports.getCreateBookInstance = async function (req, res) {
-  const allBooks = await Book.find({}, 'id, title');
-  const statuses = BookInstance.schema.path('status').enumValues;
-  res.render('createBookInstanceForm.njk', {
-    title: 'Create Book Instance',
-    allBooks,
-    statuses,
-    today: new Date().toLocaleDateString('en-CA'),
-  });
+exports.getCreateBookInstance = async function (req, res, next) {
+  try {
+    const allBooks = await Book.find({}, 'id, title');
+    const statuses = BookInstance.schema.path('status').enumValues;
+    res.render('createBookInstanceForm.njk', {
+      title: 'Create Book Instance',
+      allBooks,
+      statuses,
+      today: new Date().toLocaleDateString('en-CA'),
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 // Handle BookInstance create form on POST.
@@ -57,16 +68,20 @@ exports.postCreateBookInstance = [
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      const allBooks = await Book.find({}, 'id, title');
-      const statuses = BookInstance.schema.path('status').enumValues;
+      try {
+        const allBooks = await Book.find({}, 'id, title');
+        const statuses = BookInstance.schema.path('status').enumValues;
 
-      return res.render('createBookInstanceForm.njk', {
-        title: 'Create Book Instance',
-        bookInstance: res.body,
-        allBooks,
-        statuses,
-        errors: errors.array(),
-      });
+        return res.render('createBookInstanceForm.njk', {
+          title: 'Create Book Instance',
+          bookInstance: res.body,
+          allBooks,
+          statuses,
+          errors: errors.array(),
+        });
+      } catch (err) {
+        next(err);
+      }
     }
 
     const bookInstance = new BookInstance({
@@ -85,28 +100,44 @@ exports.postCreateBookInstance = [
 
 // Handle BookInstance delete on POST.
 exports.postDeleteBookInstance = async function (req, res, next) {
-  await BookInstance.findByIdAndDelete(req.params.id).catch((err) => next(err));
-  res.redirect('/catalog/bookInstances');
+  const { id } = req.params;
+  if (!isValidObjectId(id)) return pass404('book instance', `Invalid Object Id`, next);
+
+  try {
+    await BookInstance.findByIdAndDelete(req.params.id);
+    res.redirect('/catalog/bookInstances');
+  } catch (err) {
+    next(err);
+  }
 };
 
 // Display BookInstance update form on GET.
 exports.getUpdateBookInstance = async function (req, res, next) {
-  const [bookInstance, allBooks] = await Promise.all([
-    BookInstance.findById(req.params.id),
-    Book.find({}, 'id, title'),
-  ]).catch((err) => next(err));
+  const { id } = req.params;
+  if (!isValidObjectId(id)) return pass404('book instance', 'Invalid Object Id', next);
 
-  const statuses = BookInstance.schema.path('status').enumValues;
+  try {
+    const [bookInstance, allBooks] = await Promise.all([
+      BookInstance.findById(id),
+      Book.find({}, 'id, title'),
+    ]);
 
-  return res.render('createBookInstanceForm.njk', {
-    title: 'Update Book Instance',
-    bookInstance: {
-      ...bookInstance._doc,
-      dueBack: new Date(bookInstance.dueBack).toLocaleDateString('en-CA'),
-    },
-    allBooks,
-    statuses,
-  });
+    if (!bookInstance) return pass404('book instance', `Couldn't find id ${id}.`, next);
+
+    const statuses = BookInstance.schema.path('status').enumValues;
+
+    return res.render('createBookInstanceForm.njk', {
+      title: 'Update Book Instance',
+      bookInstance: {
+        ...bookInstance._doc,
+        dueBack: new Date(bookInstance.dueBack).toLocaleDateString('en-CA'),
+      },
+      allBooks,
+      statuses,
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 // Handle bookinstance update on POST.

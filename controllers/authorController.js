@@ -1,11 +1,13 @@
 const { body, validationResult } = require('express-validator');
+const { isValidObjectId } = require('mongoose');
 const Author = require('../models/author');
 const Book = require('../models/book');
+const { pass404 } = require('../utils/errors');
 
 // Display list of all Authors.
 exports.authorList = function (req, res, next) {
   Author.find()
-    .sort([['family_name', 'ascending']])
+    .sort([['familyName', 'ascending']])
     .exec((err, authorList) => {
       if (err) return next(err);
       res.render('authorList.njk', {
@@ -17,21 +19,21 @@ exports.authorList = function (req, res, next) {
 
 // Display detail page for a specific Author.
 exports.authorDetail = async function (req, res, next) {
-  Promise.all([
-    Author.findById(req.params.id),
-    Book.find({ author: req.params.id }, 'title summary').sort({ title: 1 }),
-  ])
-    .then(([author, books]) => ({
-      author,
-      books,
-    }))
+  const { id } = req.params;
+  if (!isValidObjectId(id)) return pass404('author', 'Invalid Object Id', next);
+
+  Promise.all([Author.findById(id), Book.find({ author: id }, 'title summary').sort({ title: 1 })])
+    .then(([author, books]) => {
+      if (!author) return pass404('author', `Couldn't find id ${id}.`, next);
+      return { author, books };
+    })
     .then((data) => {
       res.render('author.njk', {
         title: `Author: ${data.author.name}`,
         ...data,
       });
     })
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 // Display Author create form on GET.
@@ -91,10 +93,10 @@ exports.postCreateAuthor = [
 
 // Display Author delete form on GET.
 exports.getDeleteAuthor = async function (req, res, next) {
-  Promise.all([
-    Author.findById(req.params.id),
-    Book.find({ author: req.params.id }, 'title summary').sort({ title: 1 }),
-  ])
+  const { id } = req.params;
+  if (!isValidObjectId(id)) return pass404('author', `Invalid Object Id`, next);
+
+  Promise.all([Author.findById(id), Book.find({ author: id }, 'title summary').sort({ title: 1 })])
     .then(([author, books]) => ({
       author,
       books,
@@ -102,26 +104,33 @@ exports.getDeleteAuthor = async function (req, res, next) {
     .then((data) => {
       res.render('deleteAuthor.njk', { ...data, title: 'Delete Author' });
     })
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 // Handle Author delete on POST.
 exports.postDeleteAuthor = async function (req, res, next) {
-  const books = await Book.findOne({ author: req.params.id }).catch((err) => next(err));
+  const { id } = req.params;
+  if (!isValidObjectId(id)) return pass404('author', `Invalid Object Id`, next);
+
+  const books = await Book.findOne({ author: id }).catch(next);
   if (books) {
     const err = new Error();
     err.status = 403;
     err.message = `Delete the author's books before the author.`;
     next(err);
   }
-  await Author.findByIdAndDelete(req.params.id).catch((err) => next(err));
+  await Author.findByIdAndDelete(id).catch(next);
 
   res.redirect('/catalog/authors');
 };
 
 // Display Author update form on GET.
 exports.getUpdateAuthor = async function (req, res, next) {
-  const author = await Author.findById(req.params.id).catch((err) => next(err));
+  const { id } = req.params;
+  if (!isValidObjectId(id)) return pass404('author', 'Invalid Object Id', next);
+
+  const author = await Author.findById(id);
+  if (!author) return pass404('author', `Couldn't find id ${id}.`, next);
 
   return res.render('createAuthorForm.njk', {
     title: 'Update Author',
@@ -168,16 +177,21 @@ exports.postUpdateAuthor = [
       });
     }
 
-    const ogAuthor = await Author.findById(req.params.id);
+    const { id } = req.params;
+    if (!isValidObjectId(id)) return pass404('author', `Invalid Object Id`, next);
 
-    await ogAuthor
-      .updateOne({
+    const ogAuthor = await Author.findById(id);
+
+    try {
+      await ogAuthor.updateOne({
         firstName: req.body.firstName,
         familyName: req.body.familyName,
         dateOfBirth: req.body.dateOfBirth,
         dateOfDeath: req.body.dateOfDeath,
-      })
-      .catch((err) => next(err));
+      });
+    } catch (err) {
+      next(err);
+    }
 
     res.redirect(ogAuthor.url);
   },

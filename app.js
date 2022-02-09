@@ -2,10 +2,11 @@ const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const logger = require('morgan');
 const nunjucks = require('nunjucks');
 const mongoose = require('mongoose');
 require('dotenv').config();
+const debug = require('debug')('local-library:app');
+const { logHTTP, logError } = require('./utils/logger');
 
 // initialize express
 const app = express();
@@ -14,7 +15,7 @@ const app = express();
 const mongoDB = process.env.DATABASE_URL;
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.on('error', (err) => logError({ message: `MongoDB connection error: ${err.message}` }));
 
 // configure nunjucks templates
 // warn: escape all user input
@@ -27,35 +28,49 @@ nunjucks.configure('views', {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'html');
 
-// middleware
-app.use(logger('dev'));
+// Write http requests to console and combined.log: http timestamp method url status response-time res[content-length]
+app.use(logHTTP);
+
+// recognize incoming req.body object as json or strings/arrays (needed for post/put requests)
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// parse the Cookie header on the request and expose as req.cookies (and if secret provided req.signedCookies)
 app.use(cookieParser());
+
+// serve all files in the given path
 app.use(express.static(path.join(__dirname, 'public')));
 
 // routes
 app.use('/', require('./routes/index'));
 app.use('/catalog', require('./routes/catalog'));
 
-// catch 404 and forward to error handler
-app.use((req, res, next) => {
-  const err = createError(404);
-  err.message = `Shoot! Couldn't find that page.`;
-  next(err);
-});
+// if no route found, create 404 error and forward to error handler
+app.use((req, res, next) => next(createError(404)));
+
+// redirect stderr to log files and tidy console message
+app.use(logError);
 
 // error handler
 app.use((err, req, res, next) => {
+  // if a specific error wasn't caught, give a 500 error
   err.status = err.status || 500;
-  err.message = err.message || 'Something went wrong';
+  // if development, send the full error to the console and template
+  if (req.app.get('env') === 'development') {
+    debug(err);
+    return res.render('error.njk', {
+      title: err?.status,
+      message: err?.message,
+      status: err?.status,
+      cause: err?.cause,
+      production: false,
+    });
+  }
 
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  res.status(err.status || 500);
-  res.render('error.njk', { ...err });
+  // if production, make a human readable error for the template
+  if (err.status === 404) err.message = err.message || `Shoot! Couldn't find that page.`;
+  else if (err.status === 500) err.message = 'Shoot! Something went wrong.';
+  return res.render('error.njk', { message: err?.message, status: err?.status, production: true });
 });
 
 module.exports = app;

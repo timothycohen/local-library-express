@@ -4,7 +4,7 @@ const Genre = require('../models/genre');
 const BookInstance = require('../models/bookInstance');
 
 // Display Overview Details
-const overview = async (req, res) => {
+const overview = async (req, res, next) => {
   Promise.all([
     Book.countDocuments({}),
     BookInstance.countDocuments({}),
@@ -29,13 +29,7 @@ const overview = async (req, res) => {
       };
       res.render('overview.njk', data);
     })
-    .catch((error) => {
-      const data = {
-        error,
-        title: 'Local Library Home',
-      };
-      res.render('overview.njk', data);
-    });
+    .catch(next);
 };
 
 module.exports = { overview };

@@ -3,18 +3,18 @@
   place-items: center;
   text-align: center;
 }
-.status {
+.errorPage__status {
   font-size: 6rem;
 }
-.message {
+.errorPage__message {
   font-size: 1.5rem;
 }
 
 @media only screen and (min-width: 700px) {
-  .status {
+  .errorPage__status {
     font-size: 8rem;
   }
-  .message {
+  .errorPage__message {
     font-size: 2rem;
   }
 }

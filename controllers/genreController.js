@@ -1,6 +1,8 @@
 const { body, validationResult } = require('express-validator');
+const { isValidObjectId } = require('mongoose');
 const Genre = require('../models/genre');
 const Book = require('../models/book');
+const { pass404 } = require('../utils/errors');
 
 // Display list of all Genre.
 exports.genreList = function (req, res, next) {
@@ -18,14 +20,14 @@ exports.genreList = function (req, res, next) {
 
 // Display detail page for a specific Genre.
 exports.genre = function (req, res, next) {
+  const { id } = req.params;
+  if (!isValidObjectId(id)) return pass404('genre', 'Invalid Object Id', next);
+
   Promise.all([Genre.findById(req.params.id), Book.find({ genres: req.params.id })])
     .then(([genre, genreBooks]) => ({ genre, genreBooks }))
     .then((results) => {
-      if (results.genre === null) {
-        const err = new Error('Genre not found');
-        err.status = 404;
-        return next(err);
-      }
+      if (results.genre === null) return pass404('genre', `Couldn't find id ${id}.`, next);
+
       res.render('genre.njk', {
         title: `Genre: ${results.genre.name}`,
         ...results,
@@ -81,8 +83,12 @@ exports.postDeleteGenre = async function (req, res, next) {
 };
 
 // Display Genre update form on GET.
-exports.getUpdateGenre = async function (req, res) {
+exports.getUpdateGenre = async function (req, res, next) {
+  const { id } = req.params;
+  if (!isValidObjectId(id)) return pass404('genre', 'Invalid Object Id', next);
+
   const genre = await Genre.findById(req.params.id);
+  if (!genre) return pass404('genre', `Couldn't find id ${id}.`, next);
 
   return res.render('createGenreForm.njk', {
     title: 'Update Genre',
